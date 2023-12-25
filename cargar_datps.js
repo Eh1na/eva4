@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Llamada AJAX para obtener datos desde el servidor PHP
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'cargar_datos.php', true);
+    xhr.open('GET', 'cargar_datospatron.php', true);
     xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             // Analizar la respuesta JSON
