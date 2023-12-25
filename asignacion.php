@@ -8,8 +8,9 @@ if (isset($_POST['datos'])) {
 
     // Acceder a las propiedades del objeto
     $id_problema = $objeto['id_problema'];
+    $num_bodega = $objeto['num_bodega'];
     $letra_fabrica = $objeto['letra_fabrica'];
-    $produccion = $objeto['produccion'];
+    $cantidad = $objeto['cantidad'];
 
     // Realizar la operación que desees con los datos
     // Aquí puedes realizar una inserción en la base de datos, por ejemplo
@@ -28,12 +29,12 @@ if (isset($_POST['datos'])) {
     }
 
     // Construir la consulta SQL para la inserción
-    $sqlInsercion = "INSERT INTO fabrica (id_problema, letra_fabrica, produccion) VALUES ('$id_problema', '$letra_fabrica', '$produccion')";
+    $sqlInsercion = "INSERT INTO asignacion (id_problema,letra_fabrica, num_bodega, cantidad) VALUES ('$id_problema','$letra_fabrica', '$num_bodega', '$cantidad')";
 
     // Ejecutar la consulta
     if ($conn->query($sqlInsercion) === TRUE) {
         // Imprimir algún mensaje de respuesta (puede ser útil para la confirmación)
-        echo "Inserción exitosa para ID Problema: $id_problema, Letra Fábrica: $letra_fabrica, Producción: $produccion";
+        echo "Inserción exitosa para Asignacion: $id_problema, letra_fabrica : $letra_fabrica, cantidad: $cantidad, num_bodega : $num_bodega ";
     } else {
         // Imprimir un mensaje de error si la inserción falla
         echo "Error al realizar la inserción: " . $conn->error;

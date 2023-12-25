@@ -4,8 +4,10 @@ $jsonData = $_POST['data'];
 $data = json_decode($jsonData, true);
 
 // Acceder a las propiedades y arreglos de 'data'
-$totalFabrica = $data['total_fabrica'];
-$totalBodega = $data['total_bodega'];
+$total_fabrica = $data['total_fabrica'];
+$total_bodega = $data['total_bodega'];
+$id_metodo = $data['id_metodo'];
+$costo_total = $data['costo_total'];
 
 // Realizar la conexión a la base de datos (reemplaza con tus propios datos)
 $servername = "localhost";
@@ -21,20 +23,27 @@ if ($conn->connect_error) {
 }
 
 // Insertar datos en la tabla 'problema'
-$sqlProblema = "INSERT INTO problema (total_fabrica, total_bodega) VALUES ('$totalFabrica', '$totalBodega')";
+$sqlProblema = "INSERT INTO problema (total_fabrica, total_bodega) VALUES ('$total_fabrica', '$total_bodega')";
 
 if ($conn->query($sqlProblema) === TRUE) {
     // Obtener el ID autogenerado después de la inserción
     $idProblemaInsertado = $conn->insert_id;
 
-    // Puedes continuar realizando más operaciones aquí si es necesario
+    // Insertar datos en otra tabla usando el ID del problema insertado
+    $sqlOtraTabla = "INSERT INTO solucion (id_problema, id_metodo, costo_total) VALUES ('$idProblemaInsertado', '$id_metodo', '$costo_total')";
 
-    // Enviar una respuesta de vuelta si es necesario
-    echo json_encode(['success' => 'Datos recibidos y procesados correctamente.', 'id_problema_insertado' => $idProblemaInsertado]);
+    if ($conn->query($sqlOtraTabla) === TRUE) {
+        // Puedes realizar más operaciones aquí si es necesario
+
+        // Enviar una respuesta de vuelta si es necesario, incluyendo el ID del problema insertado
+        echo json_encode(['success' => 'Datos recibidos y procesados correctamente.', 'id_problema_insertado' => $idProblemaInsertado]);
+    } else {
+        echo json_encode(['error' => 'Error al realizar la inserción en \'otra_tabla\': ' . $conn->error]);
+    }
 } else {
     echo json_encode(['error' => 'Error al realizar la inserción en \'problema\': ' . $conn->error]);
 }
-// test malaya qla
+
 // Cerrar la conexión
 $conn->close();
 ?>

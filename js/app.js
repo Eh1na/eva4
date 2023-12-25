@@ -385,7 +385,6 @@ const getData=()=>{
         total_bodega:parseInt(cantBodegas),
         id_metodo:idMetodo,
         costo_total:costoTotal,   
-        fabricas:fabrik,   
     }
 
     function sendDataToPHP() {
@@ -400,8 +399,113 @@ const getData=()=>{
         })
         .then(response => response.json())
         .then(data => {
-            // Maneja la respuesta de PHP si es necesario
-            console.log(data);
+            // Maneja la respuesta de PHP
+            if (data.success) {
+                var idProblemaInsertado = data.id_problema_insertado;
+                const fabrik = f.fabricas.map(fa =>({id_problema:idProblemaInsertado,letra_fabrica: fa.id, produccion:fa.value}));
+                const bod = b.bodegas.map(bo =>({id_problema:idProblemaInsertado,num_bodega:bo.id, capacidad:bo.value}));
+                const asi =  asig.asignaciones.map(a =>({id_problema:idProblemaInsertado,letra_fabrica:a.letra_fabrica,num_bodega:a.num_bodega,cantidad:a.cantidad}));
+                const kos = cost.montos.map(c=>({
+                    id_problema:idProblemaInsertado,
+                    letra_fabrica:c.letra_fabrica,
+                    num_bodega:c.num_bodega,
+                    monto:c.monto
+                }))
+                
+                
+                // Utiliza el ID del problema insertado según sea necesario
+                console.log('ID del problema insertado:', idProblemaInsertado);
+
+                //fabricas foreach
+                fabrik.forEach(function(objeto) {
+                // Crear un objeto FormData
+                var formData = new FormData();
+                formData.append('datos', JSON.stringify(objeto));
+
+                // Realizar la solicitud AJAX (POST) para cada objeto
+                fetch('ver.php', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Manejar la respuesta del servidor para cada iteración
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            });
+
+            //bodegas foreach
+            bod.forEach(function(objeto) {
+                // Crear un objeto FormData
+                var formData = new FormData();
+                formData.append('datos', JSON.stringify(objeto));
+
+                // Realizar la solicitud AJAX (POST) para cada objeto
+                fetch('bodega.php', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Manejar la respuesta del servidor para cada iteración
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            });
+
+
+            //asignaciones foreach
+            asi.forEach(function(objeto) {
+                // Crear un objeto FormData
+                var formData = new FormData();
+                formData.append('datos', JSON.stringify(objeto));
+
+                // Realizar la solicitud AJAX (POST) para cada objeto
+                fetch('asignacion.php', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Manejar la respuesta del servidor para cada iteración
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            });
+
+
+            //costos foreach
+            kos.forEach(function(objeto) {
+                // Crear un objeto FormData
+                var formData = new FormData();
+                formData.append('datos', JSON.stringify(objeto));
+
+                // Realizar la solicitud AJAX (POST) para cada objeto
+                fetch('costo.php', {
+                    method: 'POST',
+                    body: formData,
+                })
+                .then(response => response.text())
+                .then(data => {
+                    // Manejar la respuesta del servidor para cada iteración
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Error en la solicitud:', error);
+                });
+            });
+
+
+            } else {
+                console.error('Error:', data.error);
+            }
         })
         .catch(error => {
             console.error('Error al enviar la solicitud:', error);
@@ -411,41 +515,7 @@ const getData=()=>{
     // Llama a la función para enviar los datos a PHP
     sendDataToPHP();
 
-function enviararray(){
-// Arreglo de objetos
 
-var arregloObjetos = [
-    { nombre: 'Objeto1', valor: 10 },
-    { nombre: 'Objeto2', valor: 20 },
-    { nombre: 'Objeto3', valor: 30 }
-];
-
-// Iterar sobre el arreglo de objetos
-arregloObjetos.forEach(function(objeto) {
-    // Crear un objeto FormData
-    var formData = new FormData();
-    formData.append('datos', JSON.stringify(objeto));
-
-    // Realizar la solicitud AJAX (POST) para cada objeto
-    fetch('ver.php', {
-        method: 'POST',
-        body: formData,
-    })
-    .then(response => response.text())
-    .then(data => {
-        // Manejar la respuesta del servidor para cada iteración
-        console.log(data);
-    })
-    .catch(error => {
-        console.error('Error en la solicitud:', error);
-    });
-});
-
-
-
-}
-
-enviararray();
 
 }
 
