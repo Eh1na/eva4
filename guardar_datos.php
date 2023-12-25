@@ -34,7 +34,7 @@ if ($conn->query($sqlProblema) === TRUE) {
 } else {
     echo json_encode(['error' => 'Error al realizar la inserción en \'problema\': ' . $conn->error]);
 }
-
+// test malaya qla
 // Cerrar la conexión
 $conn->close();
 ?>
