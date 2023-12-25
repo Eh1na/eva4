@@ -289,3 +289,12 @@ th, td,tr{
     background:#0e0c86;
     padding: 20px;
 }
+
+.divFull{
+    display: flex;
+    justify-content: space-between;
+}
+.divButtonBD{
+    display: flex;
+    gap: 10px;
+}

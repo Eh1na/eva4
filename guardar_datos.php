@@ -1,8 +1,18 @@
 <?php
-// Recibir los datos del formulario
-$dato1 = $_POST['dato1'];
-$dato2 = $_POST['dato2'];
-// Agrega más variables según sea necesario
+// Recibir los datos JSON desde la solicitud POST
+$jsonData = $_POST['data'];
+$data = json_decode($jsonData, true);
+
+
+// Acceder a las propiedades y arreglos de 'data'
+$totalFabrica = $data['total_fabrica'];
+$totalBodega = $data['total_bodega'];
+$idMetodo = $data['id_metodo'];
+$costoTotal = $data['costo_total'];
+// $bodegas = $data['bodegas'];
+// $fabricas = $data['fabricas'];
+// $asignaciones = $data['asignacion'];
+// $costos = $data['costo'];
 
 // Realizar la conexión a la base de datos (reemplaza con tus propios datos)
 $servername = "localhost";
@@ -17,18 +27,22 @@ if ($conn->connect_error) {
     die("Error de conexión: " . $conn->connect_error);
 }
 
-// Escapar datos para evitar inyección SQL (usa consultas preparadas para mayor seguridad)
-$dato1 = $conn->real_escape_string($dato1);
-$dato2 = $conn->real_escape_string($dato2);
-// Agrega más variables y escapa según sea necesario
 
-$sql = "INSERT INTO problema (total_fabrica, total_bodega) VALUES ('$dato1', '$dato2')";
 
-if ($conn->query($sql) === TRUE) {
+// Insertar datos en la tabla 'problema'
+$sqlProblema = "INSERT INTO problema (total_fabrica, total_bodega) VALUES ('$totalFabrica', '$totalBodega')";
+
+if ($conn->query($sqlProblema) === TRUE) {
+    // Obtener el ID autogenerado después de la inserción
     $idProblemaInsertado = $conn->insert_id;
-    echo json_encode(['success' => "Datos guardados correctamente. ID del último registro insertado en 'problema': $idProblemaInsertado"]);
+
+    // Puedes continuar realizando más operaciones aquí si es necesario
+    
+
+    // Enviar una respuesta de vuelta si es necesario
+    echo json_encode(['success' => 'Datos recibidos y procesados correctamente. ID del último registro insertado en \'problema\': ' . $idProblemaInsertado]);
 } else {
-    echo json_encode(['error' => "Error al guardar datos: " . $conn->error]);
+    echo json_encode(['error' => 'Error al realizar la inserción en \'problema\': ' . $conn->error]);
 }
 
 // Cerrar la conexión

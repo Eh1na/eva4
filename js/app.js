@@ -26,7 +26,7 @@ const btnCantBod5=document.getElementById("btnCantBod5");
 const btnCantBod6=document.getElementById("btnCantBod6");
 const cantFab=document.getElementById("cantFab")
 const cantBod=document.getElementById("cantBod")
-const headsFabricas=document.getElementById("headsFabricas")
+const headsFabricas=document.getElementById("headsFabricas");
 btnClose.addEventListener('click',()=>{
     containerModal.style.display="none"
 })
@@ -37,10 +37,11 @@ class ControllerFabricaAndProduccion{
     controllerFabricaAndProduccion(){
         p.produccion=0;
         f.fabricas=[]
+        const letter=['A','B','C','D','E','F']
         for( let i=1; i<Number(cantFabricas)+1;i++){
             if(validation.validateNumberPositive(Number(document.getElementById('fab'+i).value))===null)return
             p.calculateProduccionTotal(Number(document.getElementById('fab'+i).value));
-            f.addFabricaToList(new fabrica(i,Number(document.getElementById('fab'+i).value)))
+            f.addFabricaToList(new fabrica(letter[i-1],Number(document.getElementById('fab'+i).value)))
         }
         changeModalFab.changeModalFabricasToBodegas()
     }
@@ -82,6 +83,7 @@ class ChangeModalFabricasToBodegas{
 
 class ControllerBodegaAndAlmacenamiento{
     ControllerBodegaAndAlmacenamiento(){
+        
         a.almacenamiento=0;
         b.bodegas=[]
         for( let i=1; i<Number(cantBodegas)+1;i++){
@@ -123,16 +125,44 @@ class fabrica{
         this.value=value
     }
 }
+class asignacion{
+    letra_fabrica;
+    num_bodega;
+    cantidad;
+    constructor(){
+    }
+}
+class AsignacionesTotales{
+    asignaciones=[]
+    addAsignacionToList(asignacion){
+        this.asignaciones.push(asignacion);
+    }
+}
+
+class costo{
+    letra_fabrica;
+    num_bodega;
+    monto;
+    constructor(){
+    }
+}
+class CostosTotales{
+    montos=[]
+    addCostosToList(monto){
+        this.montos.push(monto);
+    }
+}
+
 
 class EntidadImaginaria{
     addEntidadImaginaria(){
         if (p.produccion>a.almacenamiento){
             cantBodegas++
-            b.addBodegaToList(new bodega('imaginaria',p.produccion-a.almacenamiento))
+            b.addBodegaToList(new bodega('IM',p.produccion-a.almacenamiento))
     
         }else if(p.produccion<a.almacenamiento){
             cantFabricas++
-            f.addFabricaToList(new fabrica('imaginaria',a.almacenamiento-p.produccion))
+            f.addFabricaToList(new fabrica('IM',a.almacenamiento-p.produccion))
         }
     }
 }
@@ -146,7 +176,8 @@ const b= new BodegasTotales();
 const a=new AlmacenamientoTotal();
 const controllerBA=new ControllerBodegaAndAlmacenamiento()
 const entidadImaginaria=new EntidadImaginaria();
-
+const asig=new AsignacionesTotales();
+const cost=new CostosTotales();
 
 class Controller{
     constructor(controller){
@@ -256,10 +287,197 @@ returnBod.addEventListener('click',(e)=>{
     containerModalRootBod.style.display="block";
 })
 
+var idMetodo=0;
+
+const selectMetodo=(value)=>{
+    idMetodo=value;
+}
+
+var cantInput=0;
+var costoTotal=0;
+
+const calculateTotalCosto=()=>{
+    costoTotal=0;
+        for(let u=1;u<Number(cantInput+1);u++){
+            if((document.getElementById('inputCost'+u))!=null){
+                costoTotal=costoTotal+Number(document.getElementById('inputCost'+u).value)
+                
+            }
+        }
+}
+
+const CalculateAsignacion=()=>{
+    asig.asignaciones=[]
+    let x=1
+        for(let u=0;u<Number(cantBodegas);u++){
+            
+            let idBodega=b.bodegas[u].id;
+   
+             for(let i=0; i<Number(cantFabricas);i++){
+              
+                asignacionToList= new asignacion();
+                asignacionToList.num_bodega=idBodega;
+                asignacionToList.letra_fabrica=f.fabricas[i].id;
+                asignacionToList.cantidad=Number(document.getElementById('inputCant'+x).value);
+                asig.addAsignacionToList(asignacionToList)
+                x++
+            }
+        }
+}
+const CalculateCosto=()=>{
+    cost.montos=[]
+    let x=1
+        for(let u=0;u<Number(cantBodegas);u++){
+            
+            let idBodega=b.bodegas[u].id;
+   
+             for(let i=0; i<Number(cantFabricas);i++){
+                costoToList= new costo();
+                costoToList.num_bodega=idBodega;
+                costoToList.letra_fabrica=f.fabricas[i].id;
+                costoToList.monto=Number(document.getElementById('inputCost'+x).value);
+                cost.addCostosToList(costoToList)
+                x++
+            }
+        }
+}
+
+const getData=()=>{
+    calculateTotalCosto();
+    console.log('Datos Tabla Problema')
+    console.log('cantidad de fabricas: '+cantFabricas);
+    console.log('cantidad de bodegas:' +cantBodegas);
+    console.log('Fecha:'+ Date.now())
+    console.log('--------------------------')
+    console.log('Datos Tabla Solucion')
+    console.log('id Metodo:'+idMetodo)
+    console.log('Costo Total:'+costoTotal)
+    console.log('--------------------------')
+    console.log('Tabla bodega -- lista ')
+    console.log(b.bodegas)
+    console.log('Tabla Fabrica -- lista ')
+    console.log(f.fabricas)
+    CalculateAsignacion();
+    CalculateCosto();
+    console.log(asig.asignaciones)
+    console.log(cost.montos)
+
+    
+
+    console.log('--------------------------')
+    
+
+
+
+    const fabrik = f.fabricas.map(fa =>({letra_fabrica: fa.id, produccion:fa.value}))
+
+    // bodegas:b.bodegas,
+    // asignacion:asig.asignaciones,
+    // costo:cost.montos
+
+    console.log('--------------------------')
+    console.log(fabrik)
+    console.log('--------------------------')
+    
+
+    var data ={
+        total_fabrica:parseInt(cantFabricas),
+        total_bodega:parseInt(cantBodegas),
+        id_metodo:idMetodo,
+        costo_total:costoTotal,   
+        fabricas:fabrik,   
+    }
+
+    function sendDataToPHP() {
+        // Crea un objeto FormData y agrega la propiedad 'data' con el valor de la variable 'data'
+        var formData = new FormData();
+        formData.append('data', JSON.stringify(data));
+    
+        // Realiza una solicitud AJAX
+        fetch('guardar_datos.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Maneja la respuesta de PHP si es necesario
+            console.log(data);
+        })
+        .catch(error => {
+            console.error('Error al enviar la solicitud:', error);
+        });
+    }
+    
+    // Llama a la función para enviar los datos a PHP
+    sendDataToPHP();
+
+function enviararray(){
+// Arreglo de objetos
+
+var arregloObjetos = [
+    { nombre: 'Objeto1', valor: 10 },
+    { nombre: 'Objeto2', valor: 20 },
+    { nombre: 'Objeto3', valor: 30 }
+];
+
+// Iterar sobre el arreglo de objetos
+arregloObjetos.forEach(function(objeto) {
+    // Crear un objeto FormData
+    var formData = new FormData();
+    formData.append('datos', JSON.stringify(objeto));
+
+    // Realizar la solicitud AJAX (POST) para cada objeto
+    fetch('ver.php', {
+        method: 'POST',
+        body: formData,
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Manejar la respuesta del servidor para cada iteración
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+});
+
+
+
+}
+
+enviararray();
+
+}
+
+
+
+
 
 function emparejar(){
+    cantInput=0;
     View.innerHTML=''
     table.innerHTML=""
+    const divFull=document.createElement('div')
+    divFull.className='divFull'
+    const divButtonBD=document.createElement('div')
+    divButtonBD.className='divButtonBD'
+    const btnSave=document.createElement('button')
+    const btnLoad=document.createElement('button')
+    btnSave.className='btn btnVoguel'
+    btnSave.innerText='Guardar'
+    btnSave.addEventListener('click',()=>{
+        getData()
+
+    })
+    btnLoad.className='btn btnMc'
+    btnLoad.innerText='Cargar'
+    btnLoad.addEventListener('click',()=>{
+        enviararray()
+    })
+    divButtonBD.appendChild(btnSave)
+    divButtonBD.appendChild(btnLoad)
+
+
     const divTotal=document.createElement('div')
     divTotal.className="divtotal"
     const pTotal=document.createElement('h2')
@@ -287,7 +505,7 @@ function emparejar(){
 
     for(let i=1;i<Number(cantFabricas)+1;i++){
         const headFab=document.createElement('th');
-        headFab.innerText='Fabrica '+(f.fabricas[i-1].id)
+        headFab.innerText='Fábrica '+(f.fabricas[i-1].id)
         headsFabricas.appendChild(headFab)
     }
 
@@ -301,13 +519,12 @@ function emparejar(){
     d.appendChild(str)
     dataFabricas.appendChild(d)
 
-
+    var amount=1;
     for(let i=1;i<Number(cantFabricas)+1;i++){
         const data=document.createElement('td')
         data.innerText=(f.fabricas[i-1].value)
         dataFabricas.appendChild(data)
     }
-
     table.appendChild(headsFabricas)
 
     for (let i=1;i<Number(cantBodegas)+1;i++){
@@ -316,19 +533,26 @@ function emparejar(){
         strong.innerText='Bodega '+(b.bodegas[i-1].id)
         bod.appendChild(strong)
         for(let u=0;u<Number(cantFabricas);u++){
+
             const td=document.createElement('td')
+            td.id='td'+amount
             td.className='tdInput'
             const inputCosto=document.createElement('input')
             inputCosto.className='input cost'
             inputCosto.placeholder='Ingrese el costo'
             inputCosto.type='number'
+            inputCosto.id='inputCost'+amount
             const inputCantidad=document.createElement('input')
             inputCantidad.className='input cant'
             inputCantidad.placeholder='Ingrese cantidad'
             inputCantidad.type='number'
+            inputCantidad.id='inputCant'+amount
             td.appendChild(inputCosto)
             td.appendChild(inputCantidad)
             bod.appendChild(td)
+            cantInput=cantInput+1
+            amount=amount+1
+
         }
         const prod=document.createElement('td')
         prod.innerText=(b.bodegas[i-1].value)
@@ -341,25 +565,35 @@ function emparejar(){
     const buttonNWC=document.createElement('button')
     buttonNWC.innerText='Aplicar Método NWC'
     buttonNWC.className='btn btnNWC'
+    buttonNWC.addEventListener('click',()=>{
+        selectMetodo(1);
+    })
     const buttonMc=document.createElement('button')
     buttonMc.innerText='Aplicar Método Minimos Costos'
     buttonMc.className='btn btnMc'
+    buttonMc.addEventListener('click',()=>{
+        selectMetodo(2);
+    })
     const buttonVoguel=document.createElement('button')
     buttonVoguel.innerText='Aplicar Método Voguel'
     buttonVoguel.className='btn btnVoguel'
-    
+    buttonVoguel.addEventListener('click',()=>{
+        selectMetodo(3);
+    })
     divButton.appendChild(buttonNWC)
     divButton.appendChild(buttonMc)
     divButton.appendChild(buttonVoguel)
 
+    divFull.appendChild(divTotal)
+    divFull.appendChild(divButtonBD)
 
-    View.appendChild(divTotal)
+    View.appendChild(divFull)
     View.appendChild(table)
     View.appendChild(divButton)
 }
 
 function Inputs(amount,id,entity,container){
-    for (var i=1; i<Number(amount)+1;i++){
+    for (let i=1; i<Number(amount)+1;i++){
         var div=document.createElement('div')
         const label=document.createElement('h5');
         label.innerText=entity+' n '+i;
@@ -373,5 +607,17 @@ function Inputs(amount,id,entity,container){
     }
 }
 
+
+
+var fabrik =[{
+id:"A",
+value:2
+},
+{
+    id:"B",
+    value:3
+}
+
+]
 
 
