@@ -542,7 +542,7 @@ function emparejar(){
     btnLoad.className='btn btnMc'
     btnLoad.innerText='Cargar'
     btnLoad.addEventListener('click',()=>{
-        enviararray()
+        window.open('http://localhost/eva4/verdetalle.html')
     })
     divButtonBD.appendChild(btnSave)
     divButtonBD.appendChild(btnLoad)

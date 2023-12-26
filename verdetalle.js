@@ -17,12 +17,12 @@ function obtenerDatosDelServidor(idProblema) {
            const obj = data;
     
            const container=document.getElementById('containertable')
-           const table=document.createElement('table')
+           const table=document.getElementById('table')
            const containerFull=document.getElementById('containerFull')
            
            function createTableView(){
-            containerFull.innerHTML=""
-            table.innerHTML=""
+                containerFull.innerHTML=""
+                table.innerHTML=''
                const headInfo=document.createElement('div')
                const headH1=document.createElement('h1')
                headH1.innerText="ID PROBLEMA "+obj.problema[0].id_problema
