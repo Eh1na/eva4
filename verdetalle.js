@@ -188,7 +188,7 @@ function createTableView(){
     var amount=1;
     for(let i=1;i<Number(obj.fabrica.length)+1;i++){
         const data=document.createElement('td')
-        data.innerText=("f.fabricas[i-1].value")
+        data.innerText=(obj.fabrica[i-1].produccion)
         dataFabricas.appendChild(data)
     }
     table.appendChild(headsFabricas)
@@ -220,6 +220,7 @@ function createTableView(){
         bod.appendChild(prod)
         table.appendChild(bod)
     }
+    table.appendChild(dataFabricas)
 
 }
 
