@@ -298,3 +298,12 @@ th, td,tr{
     display: flex;
     gap: 10px;
 }
+
+#containertable{
+    width: 80%;
+    margin: auto;
+}
+
+#containerFull{
+    margin:50px
+}
